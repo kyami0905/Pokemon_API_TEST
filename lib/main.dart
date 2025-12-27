@@ -30,6 +30,11 @@ class _PokemonPageState extends State<PokemonPage> {
   // データを保存する変数
   String pokemonName = '読み込み中...';
   String pokemonImage = '';
+  // ignore: non_constant_identifier_names
+  int PokeNo = 0;
+
+  final TextEditingController inputController = TextEditingController();
+
 
   // データを読み込む関数
   @override
@@ -39,10 +44,34 @@ class _PokemonPageState extends State<PokemonPage> {
     fetchPokemon();
   }
 
+  // カウントアップ
+  void countupPokemon() {
+    setState(() {
+      PokeNo += 1;
+    });
+    fetchPokemon();
+  }
+
+  // カウントダウン
+  void countdownPokemon() {
+    setState(() {
+      PokeNo -= 1;
+    });
+    fetchPokemon();
+  }
+
+  // カウント入力
+  void countInputPokemon(String inputController) {
+    setState(() {
+      PokeNo = int.parse(inputController);
+    });
+    fetchPokemon();
+  }
+
   // APIからデータを取得する関数
   Future<void> fetchPokemon() async {
-    // APIのURL ピカチュウ
-    final url = 'https://pokeapi.co/api/v2/pokemon/25';
+    // APIのURL
+    final url = 'https://pokeapi.co/api/v2/pokemon/$PokeNo';
 
     try {
       // HTTPリクエストを送信
@@ -89,9 +118,35 @@ class _PokemonPageState extends State<PokemonPage> {
           Text(pokemonName,style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
 
           SizedBox(height: 40),
-          
+
+          // カウントアップ
+          ElevatedButton(onPressed: countupPokemon, child: Text('次のポケモンへ')),
+
+          SizedBox(height: 20),
+
+          // カウントダウン
+          ElevatedButton(onPressed: countdownPokemon, child: Text('前のポケモンへ')),
+
+          SizedBox(height: 20),
+
+          // カウント入力
+          TextField(
+            controller: inputController,
+            decoration: InputDecoration(
+              labelText: 'ポケモンの番号を入力',
+              border: OutlineInputBorder(),
+            ),
+          ),
+
+          SizedBox(height: 20),
+
+          // カウント入力
+          ElevatedButton(onPressed: () => countInputPokemon(inputController.text), child: Text('ポケモンを指定する')),
+
+          SizedBox(height: 20),
+
           // 再読み込みボタン
-          ElevatedButton(onPressed: fetchPokemon, child: Text('もう一度読み込む'))
+          ElevatedButton(onPressed: fetchPokemon, child: Text('もう一度読み込む')),
         ],
         ),
       ),
